@@ -32,7 +32,7 @@ public class UserController {
      */
     // @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)//只要给方法上添加了@AuthCheck注解，就必须登录，否则抛异常，
     // 可以设置仅管理员用户使用
-    @PostMapping("/registe  r")
+    @PostMapping("/register")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         //自定义异常类
         ThrowUtils.throwIf(userRegisterRequest == null, ErrorCode.PARAMS_ERROR);

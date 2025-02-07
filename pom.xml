@@ -29,6 +29,12 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.5.9</version>
         </dependency>
+        <!--对象存储服务-->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>5.6.227</version>
+        </dependency>
         <!--工具库：https://www.hutool.cn/docs/#/?id=%f0%9f%93%9d%e6%96%87%e6%a1%a3-->
         <dependency>
             <groupId>cn.hutool</groupId>
