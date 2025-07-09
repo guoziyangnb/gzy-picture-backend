@@ -2,6 +2,9 @@ package com.yupi.yupicturebackend.common;
 
 import com.yupi.yupicturebackend.exception.ErrorCode;
 
+/**
+ * 调用响应封装
+ */
 public class ResultUtils {
 
     /**

@@ -2,6 +2,9 @@ package com.yupi.yupicturebackend.common;
 
 import lombok.Data;
 
+/**
+ * 通用的分页请求
+ */
 @Data
 public class PageRequest {
 
