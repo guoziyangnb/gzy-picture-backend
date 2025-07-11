@@ -165,6 +165,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (CollUtil.isEmpty(userList)) {
             return new ArrayList<>();
         }
+        //map(this::getUserVO) 其实就是 map(user-> getUserVO(user))
         return userList.stream().map(this::getUserVO).collect(Collectors.toList());
     }
 

@@ -30,7 +30,7 @@ public class AuthInterceptor {
      * @param joinPoint 切入点
      * @param authCheck 权限校验注解
      */
-    @Around("@annotation(authCheck)")
+    @Around("@annotation(authCheck)")  //Around在方法前后切入 ，Before方法之前切入，After方法之后切入
     public Object doInterceptor(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
         String mustRole = authCheck.mustRole();
         // 通过上下文拿到所有的属性

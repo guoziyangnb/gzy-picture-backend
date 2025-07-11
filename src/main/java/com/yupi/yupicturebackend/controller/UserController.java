@@ -144,6 +144,7 @@ public class UserController {
     /**
      * 分页获取用户封装列表（仅管理员）
      *  用Post是因为post接收的参数量比get大，涉及到复杂的查询的时候
+     *  注意这个Page是baomidou这个插件包，不是Hutool的工具包
      * @param userQueryRequest 查询请求参数
      */
     @PostMapping("/list/page/vo")
