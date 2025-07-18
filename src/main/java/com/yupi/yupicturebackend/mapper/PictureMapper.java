@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.yupi.yupicturebackend.model.entity.Picture
 */
 public interface PictureMapper extends BaseMapper<Picture> {
-//用于测试远程仓库撤销
+
 }
 
 
