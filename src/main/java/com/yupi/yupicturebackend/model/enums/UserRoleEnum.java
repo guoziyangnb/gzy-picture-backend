@@ -45,16 +45,16 @@ public enum UserRoleEnum {
         if (ObjUtil.isEmpty(value)) {
             return null;
         }
-        for (UserRoleEnum anEnum : UserRoleEnum.values()) {
-            if (anEnum.value.equals(value)) {
-                return anEnum;
-            }
-        }
-        return null;
+//        for (UserRoleEnum anEnum : UserRoleEnum.values()) {
+//            if (anEnum.value.equals(value)) {
+//                return anEnum;
+//            }
+//        }
+//        return null;
         /**
          * 优化
          * 2.之后返回枚举值
          */
-//        return VALUE_MAP.get(value);
+        return VALUE_MAP.get(value);
     }
 }
