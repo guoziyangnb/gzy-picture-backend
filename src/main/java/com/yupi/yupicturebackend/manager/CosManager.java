@@ -26,7 +26,7 @@ public class CosManager {
     /**
      * 上传对象
      *
-     * @param key  唯一键
+     * @param key  上传文件的路径，唯一键
      * @param file 文件
      */
     public PutObjectResult putObject(String key, File file) {
@@ -56,7 +56,7 @@ public class CosManager {
                 file);
         // 对图片进行处理（获取基本信息也被视作为一种处理）
         PicOperations picOperations = new PicOperations();
-        // 1 表示返回原图信息
+        // 是否需要返回原图信息 ，1 表示返回原图信息
         picOperations.setIsPicInfo(1);
         // 构造处理参数
         putObjectRequest.setPicOperations(picOperations);

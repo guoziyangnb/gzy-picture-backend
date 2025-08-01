@@ -42,13 +42,13 @@ public class FileController {
         try {
             // 上传文件
             file = File.createTempFile(filepath, null);//本地的临时文件地址
-            multipartFile.transferTo(file);//传给前端临时地址
+            multipartFile.transferTo(file);//把multipartFile这个文件传输给本地的临时文件
             cosManager.putObject(filepath, file);//调用上传逻辑
             // 返回可访问地址
             result = ResultUtils.success(filepath);
         } catch (Exception e) {
-            log.error("file upload error, filepath = " + filepath, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");//拼接
+            log.error("file upload error, filepath = " + filepath, e);//拼接
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");//抛异常
         } finally {
             if (file != null) {
                 // 删除临时文件
@@ -73,8 +73,8 @@ public class FileController {
         COSObjectInputStream cosObjectInput = null;
         try {
             COSObject cosObject = cosManager.getObject(filepath);
-            cosObjectInput = cosObject.getObjectContent();
-            // 处理下载到的流
+            cosObjectInput = cosObject.getObjectContent();//开启流
+            // 处理下载到的流，转换成字节
             byte[] bytes = IOUtils.toByteArray(cosObjectInput);
             // 设置响应头
             response.setContentType("application/octet-stream;charset=UTF-8");
@@ -86,6 +86,7 @@ public class FileController {
             log.error("file download error, filepath = " + filepath, e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "下载失败");
         } finally {
+            //释放流
             if (cosObjectInput != null) {
                 cosObjectInput.close();
             }

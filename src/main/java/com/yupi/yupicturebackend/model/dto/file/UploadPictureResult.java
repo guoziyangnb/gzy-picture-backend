@@ -2,6 +2,9 @@ package com.yupi.yupicturebackend.model.dto.file;
 
 import lombok.Data;
 
+/**
+ * 上传图片的结果
+ */
 @Data
 public class UploadPictureResult {
 

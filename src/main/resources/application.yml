@@ -17,8 +17,6 @@ server:
     servlet:
         context-path: /api
 spring:
-    profiles:
-        active: local
     application:
         name: yu-picture-backend
     #数据库配置

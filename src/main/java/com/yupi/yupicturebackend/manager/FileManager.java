@@ -60,21 +60,21 @@ public class FileManager {
             multipartFile.transferTo(file);
             // 上传图片
             PutObjectResult putObjectResult = cosManager.putPictureObject(uploadPath, file);
-            // 获取图片信心对象
+            // 获取图片信息对象
             ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
             // 封装返回结果
             UploadPictureResult uploadPictureResult = new UploadPictureResult();
             int picWidth = imageInfo.getWidth();
             int picHeight = imageInfo.getHeight();
             double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
-
+            //封装返回结果
             uploadPictureResult.setPicName(FileUtil.mainName(originFilename));
             uploadPictureResult.setPicWidth(picWidth);
             uploadPictureResult.setPicHeight(picHeight);
             uploadPictureResult.setPicScale(picScale);
             uploadPictureResult.setPicFormat(imageInfo.getFormat());
             uploadPictureResult.setPicSize(FileUtil.size(file));
-            uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
+            uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath); //设置可访问的在线地址
 
             return uploadPictureResult;
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class FileManager {
         // 1. 校验文件大小
         long fileSize = multipartFile.getSize();
         final long ONE_M = 1024 * 1024L;
-        ThrowUtils.throwIf(fileSize > 5 * ONE_M, ErrorCode.PARAMS_ERROR, "文件大小不能超过 5M");
+        ThrowUtils.throwIf(fileSize > 5 * ONE_M, ErrorCode.PARAMS_ERROR, "文件大小不能超过 5MB");
         // 2. 校验文件后缀
         String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
         // 允许上传的文件后缀
