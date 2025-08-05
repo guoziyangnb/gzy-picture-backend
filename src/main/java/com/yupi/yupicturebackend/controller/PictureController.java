@@ -20,11 +20,9 @@ import com.yupi.yupicturebackend.model.vo.PictureTagCategory;
 import com.yupi.yupicturebackend.model.vo.PictureVO;
 import com.yupi.yupicturebackend.service.PictureService;
 import com.yupi.yupicturebackend.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -33,6 +31,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
+@RestController
+@RequestMapping("/picture")
 public class PictureController {
 
     @Resource
@@ -65,7 +66,7 @@ public class PictureController {
         }
         User loginUser = userService.getLoginUser(request);
         long id = deleteRequest.getId();
-        // 判断是否存在
+        // 判断图片是否存在
         Picture oldPicture = pictureService.getById(id);
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可删除

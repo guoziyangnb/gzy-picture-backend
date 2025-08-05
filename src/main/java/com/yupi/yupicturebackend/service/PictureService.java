@@ -19,6 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 * @createDate 2025-01-27 18:05:32
 */
 public interface PictureService extends IService<Picture> {
+    /**
+     * 校验图片
+     *
+     * @param picture
+     */
     void validPicture(Picture picture);
 
     /**
@@ -26,7 +31,7 @@ public interface PictureService extends IService<Picture> {
      *
      * @param multipartFile
      * @param pictureUploadRequest
-     * @param loginUser
+     * @param loginUser 判断用户是否权限
      * @return
      */
     PictureVO uploadPicture(MultipartFile multipartFile,

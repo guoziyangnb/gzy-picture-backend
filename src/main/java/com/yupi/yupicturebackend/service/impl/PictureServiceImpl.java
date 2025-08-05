@@ -54,6 +54,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         String introduction = picture.getIntroduction();
         // 修改数据时，id 不能为空，有参数则校验
         ThrowUtils.throwIf(ObjUtil.isNull(id), ErrorCode.PARAMS_ERROR, "id 不能为空");
+        // 如果传递了url才校验
         if (StrUtil.isNotBlank(url)) {
             ThrowUtils.throwIf(url.length() > 1024, ErrorCode.PARAMS_ERROR, "url 过长");
         }
@@ -71,14 +72,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         if (pictureUploadRequest != null) {
             pictureId = pictureUploadRequest.getId();
         }
-        // 如果是更新图片，需要校验图片是否存在
+        // pictureId存在则是更新，如果是更新图片，需要校验图片是否存在
         if (pictureId != null) {
             boolean exists = this.lambdaQuery()
                     .eq(Picture::getId, pictureId)
                     .exists();
             ThrowUtils.throwIf(!exists, ErrorCode.NOT_FOUND_ERROR, "图片不存在");
         }
-        // 上传图片，得到信息
+        // pictureId不存在则是新增。上传图片，得到信息
         // 按照用户 id 划分目录 方便管理
         String uploadPathPrefix = String.format("public/%s", loginUser.getId());
         UploadPictureResult uploadPictureResult = fileManager.uploadPicture(multipartFile, uploadPathPrefix);
@@ -99,11 +100,17 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             picture.setEditTime(new Date());
         }
         //操作数据库
-        boolean result = this.saveOrUpdate(picture);
+        boolean result = this.saveOrUpdate(picture); //saveOrUpdate根据pictureId是否存在来执行视口新增还是更新
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "图片上传失败");
         return PictureVO.objToVo(picture);
     }
 
+    /**
+     * 获取图片响应类，单条
+     * @param picture
+     * @param request
+     * @return
+     */
     @Override
     public PictureVO getPictureVO(Picture picture, HttpServletRequest request) {
         // 对象转封装类
@@ -171,7 +178,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         String sortOrder = pictureQueryRequest.getSortOrder();
         // 从多字段中搜索
         if (StrUtil.isNotBlank(searchText)) {
-            // 需要拼接查询条件
+            // 需要拼接 查询条件
             queryWrapper.and(qw -> qw.like("name", searchText)
                     .or()
                     .like("introduction", searchText)
