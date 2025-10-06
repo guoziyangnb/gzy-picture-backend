@@ -34,3 +34,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/.xcodemap/config/xcodemap-class-filter.yaml
