@@ -152,7 +152,7 @@ public class PictureController {
     }
 
     /**
-     * 分页获取图片列表（封装类）
+     * 分页获取图片列表（封装类）  主页图片数据查询接口
      */
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest,
