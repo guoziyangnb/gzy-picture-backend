@@ -27,17 +27,17 @@ public interface PictureService extends IService<Picture> {
      */
     void validPicture(Picture picture);
 
-    /**
-     * 上传图片
-     *
-     * @param multipartFile
-     * @param pictureUploadRequest
-     * @param loginUser 判断用户是否权限
-     * @return
-     */
-    PictureVO uploadPicture(MultipartFile multipartFile,
-                            PictureUploadRequest pictureUploadRequest,
-                            User loginUser);
+//    /**
+//     * 上传图片
+//     *
+//     * @param multipartFile
+//     * @param pictureUploadRequest
+//     * @param loginUser 判断用户是否权限
+//     * @return
+//     */
+//    PictureVO uploadPicture(MultipartFile multipartFile,
+//                            PictureUploadRequest pictureUploadRequest,
+//                            User loginUser);
 
     Page<PictureVO> getPictureVOPage(Page<Picture> picturePage, HttpServletRequest request);
 
@@ -47,6 +47,15 @@ public interface PictureService extends IService<Picture> {
      * @return
      */
     QueryWrapper<Picture> getQueryWrapper(PictureQueryRequest pictureQueryRequest);
+
+    /**
+     * 图片上传方法
+     * @param inputSource 文件输入源
+     * @param pictureUploadRequest
+     * @param loginUser
+     * @return
+     */
+    PictureVO uploadPicture(Object inputSource, PictureUploadRequest pictureUploadRequest, User loginUser);
 
     /**
      * 获取图片包装类
