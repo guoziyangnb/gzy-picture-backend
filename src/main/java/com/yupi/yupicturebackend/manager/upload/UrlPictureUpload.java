@@ -51,7 +51,7 @@ public class UrlPictureUpload extends PictureUploadTemplate {
             // 不为空再校验是否合法，减少校验压力
             if (StrUtil.isNotBlank(contentType)) {
                 // 允许的图片类型
-                final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/webp");
+                final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/webp", "application/json","image/avif");
                 ThrowUtils.throwIf(!ALLOW_CONTENT_TYPES.contains(contentType.toLowerCase()),
                         ErrorCode.PARAMS_ERROR, "文件类型错误");
             }
