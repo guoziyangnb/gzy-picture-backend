@@ -27,7 +27,7 @@ spring:
         password: 7758258gG?
     # Redis 配置
     redis:
-        database: 0
+        database: 0 # 连接0这个数据库
         host: 127.0.0.1
         port: 6379
         timeout: 5000

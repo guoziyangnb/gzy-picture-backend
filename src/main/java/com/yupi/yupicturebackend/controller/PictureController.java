@@ -3,6 +3,8 @@ package com.yupi.yupicturebackend.controller;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yupi.yupicturebackend.annotation.AuthCheck;
 import com.yupi.yupicturebackend.common.BaseResponse;
 import com.yupi.yupicturebackend.common.DeleteRequest;
@@ -11,7 +13,6 @@ import com.yupi.yupicturebackend.constant.UserConstant;
 import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
-import com.yupi.yupicturebackend.manager.upload.PictureUploadTemplate;
 import com.yupi.yupicturebackend.model.dto.picture.*;
 import com.yupi.yupicturebackend.model.entity.Picture;
 import com.yupi.yupicturebackend.model.entity.User;
@@ -48,6 +49,16 @@ public class PictureController {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 构造缓存
+     */
+    private final Cache<String, String> LOCAL_CACHE =
+            Caffeine.newBuilder().initialCapacity(1024)
+                    .maximumSize(10000L) // 最大10000条
+                    // 缓存 5 分钟移除
+                    .expireAfterWrite(5L, TimeUnit.MINUTES)
+                    .build();
 
     /**
      * 上传图片（可重新上传）
@@ -209,29 +220,39 @@ public class PictureController {
         // ? 1.构建缓存key
         String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);         // 把请求类转换成字符串
         String hashKey = DigestUtils.md5DigestAsHex(queryCondition.getBytes());
-        String redisKey = "yupicture:listPictureVOByPage:" + hashKey; // 或者是        String.format("yupicture:listPictureVOByPage:%s",hashKey)
-        // ? 2.构建redis，从缓存中查询
-        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
-        String cacheValue = opsForValue.get(redisKey);
+        String cacheKey = "yupicture:listPictureVOByPage:" + hashKey; // 或者是        String.format("yupicture:listPictureVOByPage:%s",hashKey)
+        // ! 构造多级缓存，先从本地缓存查询，没有则从redis查询，还没有则从数据库中查询
+        // ! 1.先从本地缓存查询
+        String cacheValue = LOCAL_CACHE.getIfPresent(cacheKey);
         if (cacheValue != null){
-            // 如果缓存命中，缓存结果
+            // 如果缓存命中，返回结果
+            Page<PictureVO> cachePage = JSONUtil.toBean(cacheValue, Page.class);
+            return ResultUtils.success(cachePage);
+        }
+        // ! 2.本地缓存未命中，构建redis，从分布式缓存中查询
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+        cacheValue = opsForValue.get(cacheKey);
+        if (cacheValue != null){
+            // 如果缓存命中，更新缓存，返回结果
+            LOCAL_CACHE.put(cacheKey,cacheValue);
             Page<PictureVO> cachePage = JSONUtil.toBean(cacheValue, Page.class);
             return ResultUtils.success(cachePage);
         }
 
-        // 查询数据库
+        // ! 3.查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
         // 获取封装类
         Page<PictureVO> pictureVOPage = pictureService.getPictureVOPage(picturePage, request);
 
-        // 存入 Redis 缓存
+        // ! 4.更新 Redis 缓存
         String newCacheValue = JSONUtil.toJsonStr(pictureVOPage);
         // 5 - 10 分钟随机过期，防止缓存雪崩
         // ? 缓存雪崩指的是多个key集中在同一时期失效，所以这时候需要设置随机的过期时间
         int cacheExpireTime = 300 +  RandomUtil.randomInt(0, 300);
-        opsForValue.set(redisKey, newCacheValue, cacheExpireTime, TimeUnit.SECONDS);
-
+        opsForValue.set(cacheKey, newCacheValue, cacheExpireTime, TimeUnit.SECONDS);
+        // 写入本地缓存
+        LOCAL_CACHE.put(cacheKey,cacheValue);
         // 返回结果
         return ResultUtils.success(pictureVOPage);
     }
