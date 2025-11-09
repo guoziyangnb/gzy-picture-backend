@@ -4,6 +4,7 @@ create database if not exists yu_picture;
 -- 使用数据库
 use yu_picture;
 
+/**********************************用户表**************************************************/
 -- 用户表
 create table if not exists user
 (
@@ -21,6 +22,8 @@ create table if not exists user
     UNIQUE KEY uk_userAccount (userAccount),
     INDEX idx_userName (userName)
 ) comment '用户' collate = utf8mb4_unicode_ci;
+
+/**********************************图片表**************************************************/
 -- 图片表
 create table if not exists picture
 (
@@ -60,6 +63,14 @@ ALTER TABLE picture
     -- 添加新列
     ADD COLUMN thumbnailUrl varchar(512) NULL COMMENT '缩略图 url';
 
+-- 添加新列
+ALTER TABLE picture
+    ADD COLUMN spaceId  bigint  null comment '空间 id（为空表示公共空间）';
+
+-- 创建索引
+CREATE INDEX idx_spaceId ON picture (spaceId);
+
+/**********************************空间表**************************************************/
 -- 空间表
 create table if not exists space
 (

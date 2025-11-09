@@ -43,6 +43,14 @@ public interface PictureService extends IService<Picture> {
     Page<PictureVO> getPictureVOPage(Page<Picture> picturePage, HttpServletRequest request);
 
     /**
+     * 获取图片包装类
+     * @param picture
+     * @param request
+     * @return
+     */
+    PictureVO getPictureVO(Picture picture, HttpServletRequest request);
+
+    /**
      * 获取查询对象
      * @param pictureQueryRequest
      * @return
@@ -57,14 +65,6 @@ public interface PictureService extends IService<Picture> {
      * @return
      */
     PictureVO uploadPicture(Object inputSource, PictureUploadRequest pictureUploadRequest, User loginUser);
-
-    /**
-     * 获取图片包装类
-     * @param picture
-     * @param request
-     * @return
-     */
-    PictureVO getPictureVO(Picture picture, HttpServletRequest request);
 
     /**
      * 图片审核
