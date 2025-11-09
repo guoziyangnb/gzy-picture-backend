@@ -70,9 +70,17 @@ public abstract class PictureUploadTemplate {
             ProcessResults processResults = putObjectResult.getCiUploadResult().getProcessResults();
             List<CIObject> objectList = processResults.getObjectList();
             if (CollUtil.isNotEmpty(objectList)) {
+                // 获取压缩后图片的信心
                 CIObject compressedCiObject = objectList.get(0);
-                // 封装压缩图返回结果
-                return buildResult(originFilename, compressedCiObject);
+                // 缩略图默认等于压缩图
+                CIObject thumbnailObject = compressedCiObject;
+                // 有生成的缩略图的话才获取
+                if (objectList.size() > 1){
+                    // 获取缩略图的信息
+                    thumbnailObject = objectList.get(1);
+                }
+                // 封装返回结果
+                return buildResult(originFilename, compressedCiObject, thumbnailObject);
             }
 
             // 5. 封装返回结果  
@@ -91,9 +99,10 @@ public abstract class PictureUploadTemplate {
      *
      * @param originFilename 原始文件名
      * @param compressedCiObject 压缩后的对象
+     * @param thumbnailObject 缩略图对象
      * @return
      */
-    private UploadPictureResult buildResult(String originFilename, CIObject compressedCiObject) {
+    private UploadPictureResult buildResult(String originFilename, CIObject compressedCiObject, CIObject thumbnailObject) {
         int picWidth = compressedCiObject.getWidth();
         int picHeight = compressedCiObject.getHeight();
         double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
@@ -106,7 +115,10 @@ public abstract class PictureUploadTemplate {
         uploadPictureResult.setPicScale(picScale);
         uploadPictureResult.setPicFormat(compressedCiObject.getFormat());
         uploadPictureResult.setPicSize(compressedCiObject.getSize().longValue());
+        // 设置压缩图路径地址
         uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + compressedCiObject.getKey()); //设置可访问的在线地址
+        // 设置缩略图地址
+        uploadPictureResult.setThumbnailUrl(cosClientConfig.getHost() + "/" + thumbnailObject.getKey()); //设置可访问的在线地址
         return uploadPictureResult;
     }
 
@@ -126,7 +138,7 @@ public abstract class PictureUploadTemplate {
     protected abstract void processFile(Object inputSource, File file) throws Exception;
 
     /**
-     * 封装返回结果
+     * 封装webp返回结果
       * @param originFilename
      * @param file
      * @param uploadPath

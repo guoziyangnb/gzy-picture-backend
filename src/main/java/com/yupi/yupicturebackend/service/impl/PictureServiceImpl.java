@@ -135,6 +135,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         picture.setPicScale(uploadPictureResult.getPicScale());
         picture.setPicFormat(uploadPictureResult.getPicFormat());
         picture.setUserId(loginUser.getId());
+        picture.setThumbnailUrl(uploadPictureResult.getThumbnailUrl());
         // 填充审核参数
         this.fillReviewParams(picture,loginUser);
         // 如果 pictureId 不为空，表示更新，否则是新增
