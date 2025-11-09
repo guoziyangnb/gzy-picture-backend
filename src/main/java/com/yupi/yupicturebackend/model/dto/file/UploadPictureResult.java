@@ -19,6 +19,11 @@ public class UploadPictureResult {
     private String thumbnailUrl;
 
     /**
+     * TODO 原始图片 url
+     */
+    // TODO private String originUrl;
+
+    /**
      * 图片名称
      */
     private String picName;
