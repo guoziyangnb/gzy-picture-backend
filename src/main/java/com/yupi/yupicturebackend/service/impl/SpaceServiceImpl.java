@@ -1,5 +1,6 @@
 package com.yupi.yupicturebackend.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
@@ -10,8 +11,8 @@ import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
 import com.yupi.yupicturebackend.mapper.SpaceMapper;
+import com.yupi.yupicturebackend.model.dto.space.SpaceAddRequest;
 import com.yupi.yupicturebackend.model.dto.space.SpaceQueryRequest;
-import com.yupi.yupicturebackend.model.entity.Picture;
 import com.yupi.yupicturebackend.model.entity.Space;
 import com.yupi.yupicturebackend.model.entity.User;
 import com.yupi.yupicturebackend.model.enums.SpaceLevelEnum;
@@ -20,25 +21,30 @@ import com.yupi.yupicturebackend.model.vo.UserVO;
 import com.yupi.yupicturebackend.service.SpaceService;
 import com.yupi.yupicturebackend.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
-* @author lenovo
-* @description 针对表【space(空间)】的数据库操作Service实现
-* @createDate 2025-11-09 23:32:43
-*/
+ * @author lenovo
+ * @description 针对表【space(空间)】的数据库操作Service实现
+ * @createDate 2025-11-09 23:32:43
+ */
 @Service
 public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
-    implements SpaceService{
-    
+        implements SpaceService {
+
     @Resource
     private UserService userService;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     @Override
     public void validSpace(Space space, Boolean add) {
@@ -143,6 +149,53 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
                 space.setMaxCount(maxCount);
             }
         }
+    }
+
+    /**
+     * 创建空间
+     *
+     * @param spaceAddRequest
+     * @param loginUser
+     * @return
+     */
+    @Override
+    public long addSpace(SpaceAddRequest spaceAddRequest, User loginUser) {
+        // 1.填充参数默认值
+        Space space = new Space();
+        BeanUtil.copyProperties(spaceAddRequest,space);
+        if (StrUtil.isBlank(space.getSpaceName())){
+            space.setSpaceName("默认空间");
+        }
+        if (space.getSpaceLevel() == null){
+            space.setSpaceLevel(SpaceLevelEnum.COMMON.getValue());
+        }
+        // 填充默认空间大小和条数
+        this.fillSpaceBySpaceLevel(space);
+        // 2.校验参数
+        this.validSpace(space,false);
+        // 3.校验权限，非管理员只能创建普通级别的空间
+        Long userId = loginUser.getId();
+        space.setUserId(userId);
+        if(space.getSpaceLevel() != SpaceLevelEnum.COMMON.getValue() && !userService.isAdmin(loginUser)){
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "权限不足无法创建指定空间！");
+        }
+        // 4.控制同一个用户只能创建一个私有空间
+        String lock = String.valueOf(userId).intern();
+        // ? 这样的话锁不会及时释放
+        Long newSpaceId = transactionTemplate.execute(status -> {
+            synchronized (lock) {
+                // 判断是否已有空间
+                boolean exists = this.lambdaQuery().eq(Space::getUserId, userId).exists();
+                // 如果已有空间就不能在创建
+                ThrowUtils.throwIf(exists, ErrorCode.OPERATION_ERROR, "普通用户仅能有一个私有空间");
+                // 如果没有则创建
+                boolean result = this.save(space);
+                ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "保存空间到数据库失败");
+                return space.getId();
+            }
+        });
+        // 返回结果是包装类可以做一些处理
+        return Optional.ofNullable(newSpaceId).orElse(-1L);
     }
 }
 

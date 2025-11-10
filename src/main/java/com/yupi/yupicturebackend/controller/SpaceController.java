@@ -1,10 +1,6 @@
 package com.yupi.yupicturebackend.controller;
 
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yupi.yupicturebackend.annotation.AuthCheck;
 import com.yupi.yupicturebackend.common.BaseResponse;
 import com.yupi.yupicturebackend.common.DeleteRequest;
@@ -13,7 +9,10 @@ import com.yupi.yupicturebackend.constant.UserConstant;
 import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
-import com.yupi.yupicturebackend.model.dto.space.*;
+import com.yupi.yupicturebackend.model.dto.space.SpaceAddRequest;
+import com.yupi.yupicturebackend.model.dto.space.SpaceEditRequest;
+import com.yupi.yupicturebackend.model.dto.space.SpaceQueryRequest;
+import com.yupi.yupicturebackend.model.dto.space.SpaceUpdateRequest;
 import com.yupi.yupicturebackend.model.entity.Space;
 import com.yupi.yupicturebackend.model.entity.User;
 import com.yupi.yupicturebackend.model.vo.SpaceVO;
@@ -21,18 +20,11 @@ import com.yupi.yupicturebackend.service.SpaceService;
 import com.yupi.yupicturebackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -46,7 +38,15 @@ public class SpaceController {
     private SpaceService spaceService;
 
     // ? ctrl+shift+-  快捷键，快速缩放所有的函数接口
-    
+
+    @PostMapping("/add")
+    public BaseResponse<Long> addSpace(@RequestBody SpaceAddRequest spaceAddRequest,HttpServletRequest httpServletRequest){
+        ThrowUtils.throwIf(spaceAddRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(httpServletRequest);
+        long spaceId = spaceService.addSpace(spaceAddRequest, loginUser);
+        return ResultUtils.success(spaceId);
+    }
+
 
     /**
      * 删除空间
@@ -147,7 +147,7 @@ public class SpaceController {
      */
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<SpaceVO>> listSpaceVOByPage(@RequestBody SpaceQueryRequest spaceQueryRequest,
-                                                             HttpServletRequest request) {
+                                                         HttpServletRequest request) {
         long current = spaceQueryRequest.getCurrent();
         long size = spaceQueryRequest.getPageSize();
         // 限制爬虫
@@ -175,7 +175,7 @@ public class SpaceController {
         // 设置编辑时间
         space.setEditTime(new Date());
         // 数据校验
-        spaceService.validSpace(space,false);
+        spaceService.validSpace(space, false);
         User loginUser = userService.getLoginUser(request);
         // 判断是否存在
         long id = spaceEditRequest.getId();
