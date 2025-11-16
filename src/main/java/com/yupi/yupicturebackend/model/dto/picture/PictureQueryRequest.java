@@ -75,6 +75,11 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
     private Long userId;
 
     /**
+     * 空间 id
+     */
+    private Long spaceId;
+
+    /**
      * 状态：0-待审核; 1-通过; 2-拒绝
      */
     private Integer reviewStatus;
@@ -88,6 +93,11 @@ public class PictureQueryRequest extends PageRequest implements Serializable {
      * 审核人 id
      */
     private Long reviewerId;
+
+    /**
+     * 是否只查询 spaceId 为null的数据
+     */
+    private Boolean nullSpaceId;
   
     private static final long serialVersionUID = 1L;  
 }
