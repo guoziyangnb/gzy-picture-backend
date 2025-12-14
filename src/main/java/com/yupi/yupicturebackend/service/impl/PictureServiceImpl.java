@@ -198,6 +198,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             boolean result = this.saveOrUpdate(picture); //saveOrUpdate根据pictureId是否存在来执行视口新增还是更新
             ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "图片上传失败,数据库操作失败");
             if (finalSpaceId != null) {
+                // 更新空间使用额度
                 boolean update = spaceService.lambdaUpdate()
                         .eq(Space::getId, finalSpaceId)
                         .setSql("totalSize = totalSize + " + picture.getPicSize())
