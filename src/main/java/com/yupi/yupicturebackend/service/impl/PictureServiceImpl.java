@@ -292,7 +292,11 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         return pictureVOPage;
     }
 
-
+    /**
+     * 根据PictureQueryRequest请求类转换为实际的查询条件
+     * @param pictureQueryRequest 请求实体类
+     * @return 返回查询条件对象
+     */
     @Override
     public QueryWrapper<Picture> getQueryWrapper(PictureQueryRequest pictureQueryRequest) {
         QueryWrapper<Picture> queryWrapper = new QueryWrapper<>();
@@ -319,6 +323,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         Long reviewerId = pictureQueryRequest.getReviewerId();
         Long spaceId = pictureQueryRequest.getSpaceId();
         boolean nullSpaceId = pictureQueryRequest.isNullSpaceId();
+        Date startEditTime = pictureQueryRequest.getStartEditTime();
+        Date endEditTime = pictureQueryRequest.getEndEditTime();
 
         // 从多字段中搜索
         if (StrUtil.isNotBlank(searchText)) {
@@ -343,6 +349,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         queryWrapper.eq(ObjUtil.isNotEmpty(picScale), "picScale", picScale);
         queryWrapper.eq(ObjUtil.isNotEmpty(reviewStatus), "reviewStatus", reviewStatus);
         queryWrapper.eq(ObjUtil.isNotEmpty(reviewerId), "reviewerId", reviewerId);
+        queryWrapper.ge(ObjUtil.isNotEmpty(startEditTime), "editTime", startEditTime); // >=
+        queryWrapper.lt(ObjUtil.isNotEmpty(endEditTime), "editTime", endEditTime); // <
 
         // JSON 数组查询
         if (CollUtil.isNotEmpty(tags)) {
