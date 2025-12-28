@@ -348,7 +348,12 @@ public class PictureController {
         ThrowUtils.throwIf(pictureId == null || pictureId <= 0, ErrorCode.PARAMS_ERROR);
         Picture oldPicture = pictureService.getById(pictureId);
         ThrowUtils.throwIf(oldPicture == null, ErrorCode.PARAMS_ERROR);
-        List<ImageSearchResult> results = ImageSearchApiFacade.searchImage(oldPicture.getUrl());
+        // 如果oldPicture.getUrl()的图片网址后缀是 webp 则改用oldPicture的thumbnailUrl
+        String imgUrl = oldPicture.getUrl();
+        if (imgUrl.toLowerCase().endsWith("webp")) {
+            imgUrl = oldPicture.getThumbnailUrl();
+        }
+        List<ImageSearchResult> results = ImageSearchApiFacade.searchImage(imgUrl);
         return ResultUtils.success(results);
     }
 
