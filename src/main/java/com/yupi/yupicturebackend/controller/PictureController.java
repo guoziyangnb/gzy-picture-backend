@@ -409,7 +409,6 @@ public class PictureController {
     public BaseResponse<Boolean> editPictureBatch(@RequestBody PictureEditByBatchRequest pictureEditByBatchRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(pictureEditByBatchRequest == null, ErrorCode.PARAMS_ERROR);
         User loginUser = userService.getLoginUser(request);
-        ThrowUtils.throwIf(loginUser == null, ErrorCode.NO_AUTH_ERROR);
         pictureService.editPictureBatch(pictureEditByBatchRequest, loginUser);
         return ResultUtils.success(true);
     }

@@ -649,14 +649,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
      * @param nameRule
      */
     private void fillPictureWithNameRule(List<Picture> pictureList, String nameRule) {
-        if (StrUtil.isBlank(nameRule) || CollUtil.isNotEmpty(pictureList)) {
+        if (StrUtil.isBlank(nameRule) || CollUtil.isEmpty(pictureList)) {
             return;
         }
         long index = 1;
         try {
             for (Picture picture : pictureList) {
-                picture.setName(nameRule.replaceAll("\\{序号}", String.valueOf(index)));
-                index++;
+                picture.setName(nameRule.replaceAll("\\{序号}", String.valueOf(index++)));
             }
         } catch (Exception e) {
             log.error("批量重命名失败", e);
