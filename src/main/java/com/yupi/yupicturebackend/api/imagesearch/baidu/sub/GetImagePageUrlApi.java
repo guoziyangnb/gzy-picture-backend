@@ -1,4 +1,4 @@
-package com.yupi.yupicturebackend.api.imagesearch.sub;
+package com.yupi.yupicturebackend.api.imagesearch.baidu.sub;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;

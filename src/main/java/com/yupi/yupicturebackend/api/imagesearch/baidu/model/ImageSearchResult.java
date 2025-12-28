@@ -1,9 +1,9 @@
-package com.yupi.yupicturebackend.api.imagesearch.model;
+package com.yupi.yupicturebackend.api.imagesearch.baidu.model;
 
 import lombok.Data;
 
 /**
- * 图片搜索结果
+ * 百度图片搜索结果
  */
 @Data
 public class ImageSearchResult {

@@ -1,11 +1,11 @@
-package com.yupi.yupicturebackend.api.imagesearch.sub;
+package com.yupi.yupicturebackend.api.imagesearch.baidu.sub;
 
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.yupi.yupicturebackend.api.imagesearch.model.ImageSearchResult;
+import com.yupi.yupicturebackend.api.imagesearch.baidu.model.ImageSearchResult;
 import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;

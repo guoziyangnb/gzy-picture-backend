@@ -1,13 +1,15 @@
 package com.yupi.yupicturebackend.controller;
 
-import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.yupi.yupicturebackend.annotation.AuthCheck;
-import com.yupi.yupicturebackend.api.imagesearch.ImageSearchApiFacade;
-import com.yupi.yupicturebackend.api.imagesearch.model.ImageSearchResult;
+import com.yupi.yupicturebackend.api.imagesearch.baidu.ImageSearchApiFacade;
+import com.yupi.yupicturebackend.api.imagesearch.baidu.model.ImageSearchResult;
+import com.yupi.yupicturebackend.api.imagesearch.so.SoImageSearchApiFacade;
+import com.yupi.yupicturebackend.api.imagesearch.so.model.SoImageSearchResult;
 import com.yupi.yupicturebackend.common.BaseResponse;
 import com.yupi.yupicturebackend.common.DeleteRequest;
 import com.yupi.yupicturebackend.common.ResultUtils;
@@ -28,15 +30,13 @@ import com.yupi.yupicturebackend.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 //import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -337,7 +337,7 @@ public class PictureController {
     }
 
     /**
-     * 以图搜图接口
+     * 百度以图搜图接口
      *
      * @return
      */
@@ -351,5 +351,32 @@ public class PictureController {
         List<ImageSearchResult> results = ImageSearchApiFacade.searchImage(oldPicture.getUrl());
         return ResultUtils.success(results);
     }
+
+    /**
+     * 360 以图搜图接口
+     */
+    @PostMapping("/search/picture/so")
+    public BaseResponse<List<SoImageSearchResult>> searchPictureByPictureIsSo(@RequestBody SearchPictureByPictureRequest searchPictureByPictureRequest) {
+        ThrowUtils.throwIf(searchPictureByPictureRequest == null, ErrorCode.PARAMS_ERROR);
+        Long pictureId = searchPictureByPictureRequest.getPictureId();
+        ThrowUtils.throwIf(pictureId == null || pictureId <= 0, ErrorCode.PARAMS_ERROR);
+        Picture oldPicture = pictureService.getById(pictureId);
+        ThrowUtils.throwIf(oldPicture == null, ErrorCode.NOT_FOUND_ERROR);
+        List<SoImageSearchResult> resultList = new ArrayList<>();
+        // 这个 start 是控制查询多少页, 每页是 20 条
+        int start = 0;
+        while (resultList.size() <= 50) {
+            List<SoImageSearchResult> tempList = SoImageSearchApiFacade.searchImage(
+                    StrUtil.isNotBlank(oldPicture.getThumbnailUrl()) ? oldPicture.getThumbnailUrl() : oldPicture.getUrl(), start
+            );
+            if (tempList.isEmpty()) {
+                break;
+            }
+            resultList.addAll(tempList);
+            start += tempList.size();
+        }
+        return ResultUtils.success(resultList);
+    }
+
 
 }

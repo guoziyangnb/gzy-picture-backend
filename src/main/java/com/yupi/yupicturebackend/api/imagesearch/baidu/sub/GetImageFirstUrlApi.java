@@ -1,4 +1,4 @@
-package com.yupi.yupicturebackend.api.imagesearch.sub;
+package com.yupi.yupicturebackend.api.imagesearch.baidu.sub;
 
 import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;

@@ -1,9 +1,9 @@
-package com.yupi.yupicturebackend.api.imagesearch;
+package com.yupi.yupicturebackend.api.imagesearch.baidu;
 
-import com.yupi.yupicturebackend.api.imagesearch.model.ImageSearchResult;
-import com.yupi.yupicturebackend.api.imagesearch.sub.GetImageFirstUrlApi;
-import com.yupi.yupicturebackend.api.imagesearch.sub.GetImageListApi;
-import com.yupi.yupicturebackend.api.imagesearch.sub.GetImagePageUrlApi;
+import com.yupi.yupicturebackend.api.imagesearch.baidu.model.ImageSearchResult;
+import com.yupi.yupicturebackend.api.imagesearch.baidu.sub.GetImageFirstUrlApi;
+import com.yupi.yupicturebackend.api.imagesearch.baidu.sub.GetImageListApi;
+import com.yupi.yupicturebackend.api.imagesearch.baidu.sub.GetImagePageUrlApi;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
