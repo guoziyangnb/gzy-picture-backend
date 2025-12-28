@@ -28,6 +28,7 @@ import com.yupi.yupicturebackend.mapper.PictureMapper;
 import com.yupi.yupicturebackend.service.SpaceService;
 import com.yupi.yupicturebackend.service.UserService;
 import com.yupi.yupicturebackend.utils.ColorSimilarUtils;
+import com.yupi.yupicturebackend.utils.ColorTransformUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -183,7 +184,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         picture.setPicFormat(uploadPictureResult.getPicFormat());
         picture.setUserId(loginUser.getId());
         picture.setThumbnailUrl(uploadPictureResult.getThumbnailUrl());
-        picture.setPicColor(uploadPictureResult.getPicColor());
+//        picture.setPicColor(uploadPictureResult.getPicColor());
+        // 转换为标准颜色
+        picture.setPicColor(ColorTransformUtils.getStandardColor(uploadPictureResult.getPicColor()));
         // 填充审核参数
         this.fillReviewParams(picture,loginUser);
         // 如果 pictureId 不为空，表示更新，否则是新增
