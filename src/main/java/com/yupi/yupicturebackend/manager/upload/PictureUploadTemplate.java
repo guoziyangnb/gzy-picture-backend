@@ -47,6 +47,7 @@ public abstract class PictureUploadTemplate {
         String uuid = RandomUtil.randomString(16);
         // ? 获取文件名字
         String originFilename = getOriginFilename(inputSource);
+        originFilename = originFilename.split("\\?")[0];
         //更改文件名称
         String uploadFilename = String.format("%s_%s.%s", DateUtil.formatDate(new Date()), uuid,
                 FileUtil.getSuffix(originFilename));
@@ -84,7 +85,7 @@ public abstract class PictureUploadTemplate {
             }
 
             // 5. 封装返回结果  
-            return buildResult(originFilename, file, uploadPath, imageInfo);  
+            return buildResult(originFilename, file, uploadPath, imageInfo);
         } catch (Exception e) {  
             log.error("图片上传到对象存储失败", e);  
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "图片上传到对象存储失败");
