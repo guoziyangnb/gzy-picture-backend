@@ -10,11 +10,13 @@ import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
 import com.yupi.yupicturebackend.model.dto.space.*;
+import com.yupi.yupicturebackend.model.dto.space.analyze.SpaceCategoryAnalyzeRequest;
 import com.yupi.yupicturebackend.model.dto.space.analyze.SpaceUsageAnalyzeRequest;
 import com.yupi.yupicturebackend.model.entity.Space;
 import com.yupi.yupicturebackend.model.entity.User;
 import com.yupi.yupicturebackend.model.enums.SpaceLevelEnum;
 import com.yupi.yupicturebackend.model.vo.SpaceVO;
+import com.yupi.yupicturebackend.model.vo.analyze.SpaceCategoryAnalyzeResponse;
 import com.yupi.yupicturebackend.model.vo.analyze.SpaceUsageAnalyzeResponse;
 import com.yupi.yupicturebackend.service.SpaceAnalyzeService;
 import com.yupi.yupicturebackend.service.SpaceService;
@@ -55,5 +57,15 @@ public class SpaceAnalyzeController {
         return ResultUtils.success(spaceUsageAnalyze);
     }
 
+    /**
+     * 获取空间图片分类分析
+     */
+    @PostMapping("/category")
+    public BaseResponse<List<SpaceCategoryAnalyzeResponse>> getSpaceCategoryAnalyze(@RequestBody SpaceCategoryAnalyzeRequest spaceCategoryAnalyzeRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(spaceCategoryAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        List<SpaceCategoryAnalyzeResponse> resultList = spaceAnalyzeService.getSpaceCategoryAnalyze(spaceCategoryAnalyzeRequest, loginUser);
+        return ResultUtils.success(resultList);
+    }
 
 }
