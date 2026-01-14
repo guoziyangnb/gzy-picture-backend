@@ -162,21 +162,21 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     public long addSpace(SpaceAddRequest spaceAddRequest, User loginUser) {
         // 1.填充参数默认值
         Space space = new Space();
-        BeanUtil.copyProperties(spaceAddRequest,space);
-        if (StrUtil.isBlank(space.getSpaceName())){
+        BeanUtil.copyProperties(spaceAddRequest, space);
+        if (StrUtil.isBlank(space.getSpaceName())) {
             space.setSpaceName("默认空间");
         }
-        if (space.getSpaceLevel() == null){
+        if (space.getSpaceLevel() == null) {
             space.setSpaceLevel(SpaceLevelEnum.COMMON.getValue());
         }
         // 填充默认空间大小和条数
         this.fillSpaceBySpaceLevel(space);
         // 2.校验参数
-        this.validSpace(space,false);
+        this.validSpace(space, false);
         // 3.校验权限，非管理员只能创建普通级别的空间
         Long userId = loginUser.getId();
         space.setUserId(userId);
-        if(space.getSpaceLevel() != SpaceLevelEnum.COMMON.getValue() && !userService.isAdmin(loginUser)){
+        if (space.getSpaceLevel() != SpaceLevelEnum.COMMON.getValue() && !userService.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "权限不足无法创建指定空间！");
         }
         // 4.控制同一个用户只能创建一个私有空间
@@ -196,6 +196,14 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         });
         // 返回结果是包装类可以做一些处理
         return Optional.ofNullable(newSpaceId).orElse(-1L);
+    }
+
+    @Override
+    public void checkSpaceAuth(User loginUser, Space space) {
+        // 仅本人或管理员可删除
+        if (!space.getUserId().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
     }
 }
 

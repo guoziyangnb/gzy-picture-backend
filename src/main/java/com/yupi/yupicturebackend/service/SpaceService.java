@@ -12,24 +12,25 @@ import com.yupi.yupicturebackend.model.vo.SpaceVO;
 import javax.servlet.http.HttpServletRequest;
 
 /**
-* @author lenovo
-* @description 针对表【space(空间)】的数据库操作Service
-* @createDate 2025-11-09 23:32:43
-*/
+ * @author lenovo
+ * @description 针对表【space(空间)】的数据库操作Service
+ * @createDate 2025-11-09 23:32:43
+ */
 public interface SpaceService extends IService<Space> {
     /**
      * 校验空间
      *
      * @param space
-     * @param add 是否为创建
+     * @param add   是否为创建
      */
     void validSpace(Space space, Boolean add);
-    
+
 
     Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage, HttpServletRequest request);
 
     /**
      * 获取空间包装类
+     *
      * @param space
      * @param request
      * @return
@@ -38,6 +39,7 @@ public interface SpaceService extends IService<Space> {
 
     /**
      * 获取查询对象
+     *
      * @param spaceQueryRequest
      * @return
      */
@@ -45,6 +47,7 @@ public interface SpaceService extends IService<Space> {
 
     /**
      * 根据空间级别自动填充空间对象的限额
+     *
      * @param space
      */
     void fillSpaceBySpaceLevel(Space space);
@@ -57,4 +60,12 @@ public interface SpaceService extends IService<Space> {
      * @return
      */
     long addSpace(SpaceAddRequest spaceAddRequest, User loginUser);
+
+    /**
+     * 校验空间权限
+     *
+     * @param loginUser
+     * @param space
+     */
+    void checkSpaceAuth(User loginUser, Space space);
 }
