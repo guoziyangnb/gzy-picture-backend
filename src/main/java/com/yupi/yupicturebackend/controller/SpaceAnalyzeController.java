@@ -10,18 +10,12 @@ import com.yupi.yupicturebackend.exception.BusinessException;
 import com.yupi.yupicturebackend.exception.ErrorCode;
 import com.yupi.yupicturebackend.exception.ThrowUtils;
 import com.yupi.yupicturebackend.model.dto.space.*;
-import com.yupi.yupicturebackend.model.dto.space.analyze.SpaceCategoryAnalyzeRequest;
-import com.yupi.yupicturebackend.model.dto.space.analyze.SpaceSizeAnalyzeRequest;
-import com.yupi.yupicturebackend.model.dto.space.analyze.SpaceTagAnalyzeRequest;
-import com.yupi.yupicturebackend.model.dto.space.analyze.SpaceUsageAnalyzeRequest;
+import com.yupi.yupicturebackend.model.dto.space.analyze.*;
 import com.yupi.yupicturebackend.model.entity.Space;
 import com.yupi.yupicturebackend.model.entity.User;
 import com.yupi.yupicturebackend.model.enums.SpaceLevelEnum;
 import com.yupi.yupicturebackend.model.vo.SpaceVO;
-import com.yupi.yupicturebackend.model.vo.analyze.SpaceCategoryAnalyzeResponse;
-import com.yupi.yupicturebackend.model.vo.analyze.SpaceSizeAnalyzeResponse;
-import com.yupi.yupicturebackend.model.vo.analyze.SpaceTagAnalyzeResponse;
-import com.yupi.yupicturebackend.model.vo.analyze.SpaceUsageAnalyzeResponse;
+import com.yupi.yupicturebackend.model.vo.analyze.*;
 import com.yupi.yupicturebackend.service.SpaceAnalyzeService;
 import com.yupi.yupicturebackend.service.SpaceService;
 import com.yupi.yupicturebackend.service.UserService;
@@ -95,6 +89,21 @@ public class SpaceAnalyzeController {
         ThrowUtils.throwIf(spaceSizeAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
         User loginUser = userService.getLoginUser(request);
         List<SpaceSizeAnalyzeResponse> resultList = spaceAnalyzeService.getSpaceSizeAnalyze(spaceSizeAnalyzeRequest, loginUser);
+        return ResultUtils.success(resultList);
+    }
+
+    /**
+     * 获取空间图片上传时间分析
+     *
+     * @param spaceUserAnalyzeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/user")
+    public BaseResponse<List<SpaceUserAnalyzeResponse>> getSpaceUserAnalyze(@RequestBody SpaceUserAnalyzeRequest spaceUserAnalyzeRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(spaceUserAnalyzeRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        List<SpaceUserAnalyzeResponse> resultList = spaceAnalyzeService.getSpaceUserAnalyze(spaceUserAnalyzeRequest, loginUser);
         return ResultUtils.success(resultList);
     }
 }
