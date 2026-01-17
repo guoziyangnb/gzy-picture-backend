@@ -228,9 +228,10 @@ public class SpaceAnalyzeServiceImpl extends ServiceImpl<SpaceMapper, Space>
 
         // 构造查询条件
         QueryWrapper<Picture> queryWrapper = new QueryWrapper<>();
+        fillAnalyzeQueryWrapper(spaceUserAnalyzeRequest, queryWrapper);
+        // 补充用户id查询
         Long userId = spaceUserAnalyzeRequest.getUserId();
         queryWrapper.eq(ObjUtil.isNotNull(userId), "userId", userId);
-        fillAnalyzeQueryWrapper(spaceUserAnalyzeRequest, queryWrapper);
 
         // 分析维度：每日、每周、每月
         String timeDimension = spaceUserAnalyzeRequest.getTimeDimension();
