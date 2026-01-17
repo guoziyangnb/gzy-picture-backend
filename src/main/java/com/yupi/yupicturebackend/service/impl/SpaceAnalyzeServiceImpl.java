@@ -129,7 +129,7 @@ public class SpaceAnalyzeServiceImpl extends ServiceImpl<SpaceMapper, Space>
                 .map(result -> {
                     String category = result.get("category") != null ? result.get("category").toString() : "未分类";
                     Long count = ((Number) result.get("count")).longValue();
-                    Long totalSize = ((Number) result.get("totalSize")).longValue();
+                    Long totalSize = ((Number) result.get("totalSize")).longValue(); // 这里不能直接用Long转，因为BigDecimal继承了Number，用Number转
                     return new SpaceCategoryAnalyzeResponse(category, count, totalSize);
                 })
                 .collect(Collectors.toList());
