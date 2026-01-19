@@ -10,9 +10,9 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(exclude = {
-        RedisAutoConfiguration.class,  // 先暂时不触发redis连接
+//        RedisAutoConfiguration.class,  // 先暂时不触发redis连接
         SessionAutoConfiguration.class, // spring-session依赖触发Redis连接,
-        ShardingSphereAutoConfiguration.class // 先暂时不走分库分表
+        ShardingSphereAutoConfiguration.class
 })
 @EnableAsync
 @MapperScan("com.yupi.yupicturebackend.mapper")

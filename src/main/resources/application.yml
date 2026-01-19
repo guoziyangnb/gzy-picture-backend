@@ -35,6 +35,16 @@ spring:
         url: jdbc:mysql://localhost:3306/yu_picture
         username: root
         password: 7758258gG?
+    # Redis 配置
+    redis:
+        database: 0 # 连接0这个数据库
+        host: 127.0.0.1
+        port: 6379
+        timeout: 5000
+    # 开放更大的文件上传体积
+    servlet:
+        multipart:
+            max-file-size: 10MB
     # 空间图片分表
     shardingsphere:
         datasource:
@@ -62,16 +72,6 @@ spring:
                             algorithmClassName: com.yupi.yupicturebackend.manager.sharding.PictureShardingAlgorithm
         props:
             sql-show: true # 能否打印实际执行的sql
-    # Redis 配置
-    redis:
-        database: 0 # 连接0这个数据库
-        host: 127.0.0.1
-        port: 6379
-        timeout: 5000
-    # 开放更大的文件上传体积
-    servlet:
-        multipart:
-            max-file-size: 10MB
     profiles:
         active: local
 knife4j:

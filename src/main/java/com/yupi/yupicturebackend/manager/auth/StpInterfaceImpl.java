@@ -72,7 +72,7 @@ public class StpInterfaceImpl implements StpInterface {
         List<String> ADMIN_PERMISSIONS = spaceUserAuthManager.getPermissionsByRole(SpaceRoleEnum.ADMIN.getValue());
         // 获取上下文对象
         SpaceUserAuthContext authContext = getAuthContextByRequest();
-        // 如果所有字段都为空，表示查询公共图库，可以通过
+    // 如果所有字段都为空，表示查询公共图库，可以通过
         if (isAllFieldsNull(authContext)) {
             return ADMIN_PERMISSIONS;
         }
