@@ -1,5 +1,6 @@
 package com.yupi.yupicturebackend;
 
+import org.apache.shardingsphere.spring.boot.ShardingSphereAutoConfiguration;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +11,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication(exclude = {
         RedisAutoConfiguration.class,  // 先暂时不触发redis连接
-        SessionAutoConfiguration.class // spring-session依赖触发Redis连接,
+        SessionAutoConfiguration.class, // spring-session依赖触发Redis连接,
+        ShardingSphereAutoConfiguration.class // 先暂时不走分库分表
 })
 @EnableAsync
 @MapperScan("com.yupi.yupicturebackend.mapper")

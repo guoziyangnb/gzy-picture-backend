@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * 分表管理器
  */
-@Component
+//@Component
 @Slf4j
 public class DynamicShardingManager {
 

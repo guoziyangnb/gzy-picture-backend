@@ -55,9 +55,10 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     @Resource
     private TransactionTemplate transactionTemplate;
 
-    @Resource
-    @Lazy //延时加载，用到再加载
-    private DynamicShardingManager dynamicShardingManager;
+    // 为方便部署明显暂时不走分表
+//    @Resource
+//    @Lazy //延时加载，用到再加载
+//    private DynamicShardingManager dynamicShardingManager;
 
     @Override
     public void validSpace(Space space, Boolean add) {
@@ -228,8 +229,8 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
                     result = spaceUserService.save(spaceUser);
                     ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "创建团队成员记录失败");
                 }
-                // 创建分表（仅对团队空间有效）
-                dynamicShardingManager.createSpacePictureTable(space);
+//                // 创建分表（仅对团队空间有效）  为方便部署,暂时不使用
+//                dynamicShardingManager.createSpacePictureTable(space);
                 // 返回新写入的数据 id
                 return space.getId();
             }
