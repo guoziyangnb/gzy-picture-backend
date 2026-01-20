@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.CIObject;
 import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
@@ -71,14 +72,22 @@ public abstract class PictureUploadTemplate {
             ProcessResults processResults = putObjectResult.getCiUploadResult().getProcessResults();
             List<CIObject> objectList = processResults.getObjectList();
             if (CollUtil.isNotEmpty(objectList)) {
-                // 获取压缩后图片的信心
+                // 获取压缩后图片的信息 -- 压缩图 webp 格式
                 CIObject compressedCiObject = objectList.get(0);
                 // 缩略图默认等于压缩图
                 CIObject thumbnailObject = compressedCiObject;
+                String subBefore = StrUtil.subBefore(objectList.get(1).getKey(), ".", false);
                 // 有生成的缩略图的话才获取
-                if (objectList.size() > 1){
+                if (objectList.size() > 1 && subBefore.endsWith("_thumbnail")){
                     // 获取缩略图的信息
                     thumbnailObject = objectList.get(1);
+                }
+                if (objectList.size() > 2){
+                    // 压缩图的key末尾要是没有，则给png加上
+                    String endName = StrUtil.subAfter(compressedCiObject.getKey(), ".", false);
+                    if (StrUtil.isBlank(endName)){
+                        compressedCiObject = objectList.get(2);
+                    }
                 }
                 // 封装返回结果
                 return buildResult(originFilename, compressedCiObject, thumbnailObject, imageInfo);

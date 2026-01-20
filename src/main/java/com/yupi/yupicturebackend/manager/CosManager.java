@@ -91,7 +91,7 @@ public class CosManager {
             rules.add(thumbnailRule);
         }
 
-        // 3.转换处理：如果没有后缀就转化成 png 后缀
+        // TODO 3.转换处理：如果没有后缀就转化成 png 后缀
         String transferKey = FileUtil.mainName(key) + "_transfer" + ".png";
         PicOperations.Rule transferRule = new PicOperations.Rule();
         transferRule.setBucket(cosClientConfig.getBucket());
